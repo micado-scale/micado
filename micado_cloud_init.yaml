@@ -290,6 +290,7 @@ runcmd:
   - docker-compose -f /etc/micado/docker-compose.yml up -d
   - chmod 777 /etc/prometheus_executor/conf.sh
   - chmod 777 /etc/prometheus/alert_generator.sh
+  - chmod -R 555 /etc/consul/
   - docker network create -d bridge my-net --subnet 172.31.0.0/24
   - docker run -d --network=my-net --ip="172.31.0.2" -p 9090:9090 -v /etc/:/etc prom/prometheus:v1.8.0
   - docker run -d --network=my-net --ip="172.31.0.3" -v /etc/alertmanager/:/etc/alertmanager/ -p 9093:9093 prom/alertmanager
