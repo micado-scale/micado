@@ -21,7 +21,7 @@
             replicas=$(cat getservice.json | jq '.Spec.Mode.Replicated.Replicas')
             service_cpulimit=$(jq '.Spec.TaskTemplate.Resources.Limits.NanoCPUs' getservice.json | cut -c 1-2)
             if [ "$service_cpulimit" = "nu" ]; then
-              service_cpulimit=80
+              service_cpulimit=0
             fi
             echo " number of replicas before scaling" $replicas
             # make sure that we don't go bellow 1 container
