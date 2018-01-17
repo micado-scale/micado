@@ -5,7 +5,7 @@ services:
         ports:
             - 6379:6379
         networks:
-            jef_network:
+            jqueuer_network:
 
     statsd:
         image: prom/statsd-exporter
@@ -15,20 +15,20 @@ services:
             - 9102:9102
             - 9102:9102/udp
         networks:
-            jef_network:
+            jqueuer_network:
 
     prometheus:
         image: prom/prometheus
         container_name: prometheus
         volumes:
-            - /etc/jsf/prometheus/:/etc/prometheus/
+            - /etc/jqueuer/prometheus/:/etc/prometheus/
         command:
             - '--config.file=/etc/prometheus/prometheus.yml'
             - '--storage.tsdb.path=/prometheus'
         ports:
             - 9091:9090
         networks:
-            jef_network:
+            jqueuer_network:
 
     grafana:
         image: grafana/grafana
@@ -38,7 +38,7 @@ services:
             - GF_SECURITY_ADMIN_PASSWORD=foobar
             - GF_USERS_ALLOW_SIGN_UP=false
         networks:
-            jef_network:
+            jqueuer_network:
 
     rabbit:
         hostname: rabbit
@@ -49,7 +49,7 @@ services:
         ports:
             - "5672:5672"
         networks:
-            jef_network:
+            jqueuer_network:
 
     experiment_manager:
         image: osabuoun/experiment_manager
@@ -60,10 +60,10 @@ services:
             - /usr/bin/docker:/usr/bin/docker
             - /var/run/docker.sock:/var/run/docker.sock
         networks:
-            jef_network:
+            jqueuer_network:
         volumes:
             - /usr/bin/docker:/usr/bin/docker
             - /var/run/docker.sock:/var/run/docker.sock
 networks:
-    jef_network:
+    jqueuer_network:
         external: true     
