@@ -1,0 +1,16 @@
+{
+	"id":1,
+	"orgId":1,
+	"Name":"JQueuer-Server",
+	"Type":"prometheus",
+	"typeLogoUrl":"public/app/plugins/datasource/prometheus/img/prometheus_logo.svg",
+	"Access":"direct",
+	"url":"http://178.22.71.248:9091",
+	"password":"",
+	"user":"",
+	"database":"",
+	"basicAuth":false,
+	"isDefault":true,
+	"jsonData":
+		{"timeInterval":"5s"}
+}
