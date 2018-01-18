@@ -35,10 +35,15 @@ services:
         ports:
             - 3000:3000
         environment:
-            - GF_SECURITY_ADMIN_PASSWORD=foobar
+            - GF_SECURITY_ADMIN_PASSWORD=f4c85f99a0f97a5402e2c0faeefc2355e3df785b62f6254e89074b880a682b19
             - GF_USERS_ALLOW_SIGN_UP=false
         networks:
             jqueuer_network:
+        volumes:
+            - /etc/jqueuer/grafana/:/etc/grafana/jqueuer
+        command:
+            - /etc/grafana/jqueuer/install.sh
+                
 
     rabbit:
         hostname: rabbit
@@ -53,7 +58,6 @@ services:
 
     experiment_manager:
         image: osabuoun/experiment_manager
-        #image: experiment_manager
         ports:
             - "8081:8081"
         volumes:
