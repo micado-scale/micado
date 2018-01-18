@@ -5,7 +5,7 @@
 	"Type":"prometheus",
 	"typeLogoUrl":"public/app/plugins/datasource/prometheus/img/prometheus_logo.svg",
 	"Access":"direct",
-	"url":"http://178.22.71.248:9091",
+	"url":"http://prometheus:9090",
 	"password":"",
 	"user":"",
 	"database":"",
