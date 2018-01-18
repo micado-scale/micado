@@ -1,7 +1,7 @@
 {
 	"id":1,
 	"orgId":1,
-	"Name":"JQueuer-Server",
+	"Name":"DS_JQUEUER-SERVER",
 	"Type":"prometheus",
 	"typeLogoUrl":"public/app/plugins/datasource/prometheus/img/prometheus_logo.svg",
 	"Access":"direct",
