@@ -106,8 +106,7 @@ services:
         networks:
             jqueuer_network:
         volumes:
-            - /etc/jqueuer/flower/flowerconfig.py:/opt/celery-flower/flowerconfig.py
-            - /etc/jqueuer/celeryconfig.py:/opt/celery-flower/celeryconfig.py
+            - /etc/jqueuer/flower/:/opt/celery-flower/
         logging:
             driver: syslog
             options:
