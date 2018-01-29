@@ -71,7 +71,7 @@ services:
         volumes:
             - /etc/jqueuer/grafana/:/etc/grafana/jqueuer
         command:
-            - /etc/grafana/jqueuer/install.sh
+            - /etc/grafana/jqueuer/install.sh &
         logging:
             driver: syslog
             options:
