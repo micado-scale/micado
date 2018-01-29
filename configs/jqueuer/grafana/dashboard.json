@@ -70,7 +70,7 @@
             "hideZero": false,
             "max": true,
             "min": true,
-            "rightSide": false,
+            "rightSide": true,
             "show": true,
             "total": false,
             "values": true
@@ -90,43 +90,43 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "count(jqueuer_job_added)",
+              "expr": "count(jqueuer_job_added) By (experiment_id)",
               "format": "time_series",
               "hide": false,
               "instant": false,
               "interval": "",
               "intervalFactor": 2,
-              "legendFormat": "Added",
+              "legendFormat": "Added {{experiment_id}}",
               "refId": "A"
             },
             {
-              "expr": "count(jqueuer_job_started_count)",
+              "expr": "count(jqueuer_job_started_count) By (experiment_id)",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "Started",
+              "legendFormat": "Started {{experiment_id}}",
               "refId": "D"
             },
             {
-              "expr": "count(jqueuer_job_running_count)",
+              "expr": "count(jqueuer_job_running_count) By (experiment_id)",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "Running",
+              "legendFormat": "Running {{experiment_id}}",
               "refId": "E"
             },
             {
-              "expr": "count(jqueuer_job_accomplished_count)",
+              "expr": "count(jqueuer_job_accomplished_count) By (experiment_id)",
               "format": "time_series",
               "instant": false,
               "interval": "",
               "intervalFactor": 2,
-              "legendFormat": "Accomplished",
+              "legendFormat": "Accomplished {{experiment_id}}",
               "refId": "B"
             },
             {
-              "expr": "count(jqueuer_job_failed_count)",
+              "expr": "count(jqueuer_job_failed_count) By (experiment_id)",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "Failed",
+              "legendFormat": "Failed {{experiment_id}}",
               "refId": "C"
             }
           ],
@@ -180,6 +180,7 @@
             "current": false,
             "max": true,
             "min": true,
+            "rightSide": true,
             "show": true,
             "total": false,
             "values": true
@@ -199,17 +200,17 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "avg(jqueuer_job_accomplished_latency)",
+              "expr": "avg(jqueuer_job_accomplished_latency) By (experiment_id)",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "Avg - Accomplishment Latency",
+              "legendFormat": "Avg - Accomplishment Latency -  {{experiment_id}}",
               "refId": "A"
             },
             {
-              "expr": "avg(jqueuer_job_failed_latency)",
+              "expr": "avg(jqueuer_job_failed_latency) By (experiment_id)",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "Avg - Failure Latency",
+              "legendFormat": "Avg - Failure Latency -  {{experiment_id}}",
               "refId": "B"
             }
           ],
@@ -275,6 +276,7 @@
             "current": false,
             "max": true,
             "min": true,
+            "rightSide": true,
             "show": true,
             "total": false,
             "values": true
@@ -294,31 +296,32 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "count(jqueuer_task_added)",
+              "expr": "count(jqueuer_task_added) By (experiment_id)",
               "format": "time_series",
+              "interval": "",
               "intervalFactor": 2,
-              "legendFormat": "Tasks - Added",
+              "legendFormat": "Added - {{experiment_id}}",
               "refId": "A"
             },
             {
-              "expr": "count(jqueuer_task_started_count)",
+              "expr": "count(jqueuer_task_started_count) By (experiment_id)",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "Tasks - Started",
+              "legendFormat": "Started - {{experiment_id}}",
               "refId": "B"
             },
             {
-              "expr": "count(jqueuer_task_running_count)",
+              "expr": "count(jqueuer_task_running_count) By (experiment_id)",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "Tasks - Running",
+              "legendFormat": "Running - {{experiment_id}}",
               "refId": "C"
             },
             {
-              "expr": "count(jqueuer_task_accomplished_count)",
+              "expr": "count(jqueuer_task_accomplished_count) By (experiment_id)",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "Tasks - Accomplished",
+              "legendFormat": "Accomplished - {{experiment_id}}",
               "refId": "D"
             }
           ],
@@ -373,6 +376,7 @@
             "current": false,
             "max": true,
             "min": true,
+            "rightSide": true,
             "show": true,
             "total": false,
             "values": true
@@ -392,18 +396,18 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "avg(jqueuer_task_accomplished_latency)",
+              "expr": "avg(jqueuer_task_accomplished_latency) by (experiment_id)",
               "format": "time_series",
               "interval": "",
               "intervalFactor": 2,
-              "legendFormat": "Avg - Accomplishment Latency",
+              "legendFormat": "Avg - Accomplishment Latency -  - {{experiment_id}}",
               "refId": "A"
             },
             {
-              "expr": "avg(jqueuer_job_failed_latency)",
+              "expr": "avg(jqueuer_job_failed_latency) by (experiment_id)",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "Avg - Failure Latency",
+              "legendFormat": "Avg - Failure Latency -  - {{experiment_id}}",
               "refId": "B"
             }
           ],
@@ -469,6 +473,7 @@
             "current": true,
             "max": true,
             "min": true,
+            "rightSide": true,
             "show": true,
             "total": false,
             "values": true
@@ -488,33 +493,33 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "jqueuer_service_replicas_min",
+              "expr": "avg(jqueuer_service_replicas_min) By (experiment_id)",
               "format": "time_series",
               "interval": "",
               "intervalFactor": 2,
-              "legendFormat": "Min",
+              "legendFormat": "Min {{experiment_id}}",
               "refId": "A"
             },
             {
-              "expr": "jqueuer_service_replicas_max",
+              "expr": "avg(jqueuer_service_replicas_max) By (experiment_id)",
               "format": "time_series",
               "interval": "",
               "intervalFactor": 2,
-              "legendFormat": "Max",
+              "legendFormat": "Max  {{experiment_id}}",
               "refId": "B"
             },
             {
-              "expr": "jqueuer_service_replicas_needed",
+              "expr": "avg(jqueuer_service_replicas_needed) By (experiment_id)",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "Needed",
+              "legendFormat": "Needed  {{experiment_id}}",
               "refId": "C"
             },
             {
-              "expr": "jqueuer_service_replicas_running",
+              "expr": "avg(jqueuer_service_replicas_running) By (experiment_id)  ",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "Running",
+              "legendFormat": "Running {{experiment_id}}",
               "refId": "D"
             }
           ],
@@ -567,6 +572,7 @@
             "current": false,
             "max": false,
             "min": false,
+            "rightSide": true,
             "show": true,
             "total": false,
             "values": false
@@ -586,17 +592,17 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "jqueuer_experiment_actual_start_timestamp",
+              "expr": "avg(jqueuer_experiment_actual_start_timestamp) by (experiment_id)",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "Actual Start",
+              "legendFormat": "Actual Start - {{experiment_id}}",
               "refId": "A"
             },
             {
-              "expr": "jqueuer_experiment_deadline_timestamp",
+              "expr": "avg(jqueuer_experiment_deadline_timestamp) by (experiment_id)",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "Deadline",
+              "legendFormat": "Deadline - {{experiment_id}}",
               "refId": "B"
             },
             {
