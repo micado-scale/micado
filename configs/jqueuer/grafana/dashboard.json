@@ -1,8 +1,8 @@
 {"dashboard": {
   "__inputs": [
     {
-      "name": "DS_DS_JQUEUER-SERVER",
-      "label": "JQueuer-Server",
+      "name": "jqueuer_prometheus",
+      "label": "jqueuer_prometheus",
       "description": "",
       "type": "datasource",
       "pluginId": "prometheus",
@@ -58,7 +58,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "DS_JQUEUER-SERVER",
+          "datasource": "jqueuer_prometheus",
           "fill": 1,
           "hideTimeOverride": false,
           "id": 1,
@@ -171,7 +171,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "DS_JQUEUER-SERVER",
+          "datasource": "jqueuer_prometheus",
           "fill": 1,
           "id": 4,
           "legend": {
@@ -266,7 +266,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "DS_JQUEUER-SERVER",
+          "datasource": "jqueuer_prometheus",
           "fill": 1,
           "id": 2,
           "legend": {
@@ -363,7 +363,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "DS_JQUEUER-SERVER",
+          "datasource": "jqueuer_prometheus",
           "decimals": null,
           "fill": 1,
           "id": 3,
@@ -460,7 +460,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "DS_JQUEUER-SERVER",
+          "datasource": "jqueuer_prometheus",
           "fill": 1,
           "id": 5,
           "legend": {
@@ -559,7 +559,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "DS_JQUEUER-SERVER",
+          "datasource": "jqueuer_prometheus",
           "fill": 1,
           "id": 6,
           "legend": {
@@ -687,7 +687,7 @@
     ]
   },
   "timezone": "",
-  "title": "JQueuer-Dashboard",
+  "title": "JQueuer_Dashboard",
   "version": 19
 }
 }

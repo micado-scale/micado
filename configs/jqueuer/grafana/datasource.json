@@ -1,16 +1,16 @@
 {
-	"id":1,
-	"orgId":1,
-	"Name":"DS_JQUEUER-SERVER",
+	"Name":"jqueuer_prometheus",
 	"Type":"prometheus",
 	"typeLogoUrl":"public/app/plugins/datasource/prometheus/img/prometheus_logo.svg",
-	"Access":"direct",
+	"Access":"proxy",
 	"url":"http://prometheus:9090",
 	"password":"",
 	"user":"",
 	"database":"",
 	"basicAuth":false,
-	"isDefault":true,
+	"isDefault":false,
 	"jsonData":
-		{"timeInterval":"5s"}
+		{
+			"timeInterval":"5s"
+		}
 }
