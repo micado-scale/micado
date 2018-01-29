@@ -18,7 +18,6 @@ services:
             driver: syslog
             options:
                 syslog-address: "udp://syslog_server:514"
-                log-opt:
                 tag: redis
 
     statsd:
@@ -34,7 +33,6 @@ services:
             driver: syslog
             options:
                 syslog-address: "udp://syslog_server:514"
-                log-opt:
                 tag: statsd
 
     prometheus:
@@ -53,7 +51,6 @@ services:
             driver: syslog
             options:
                 syslog-address: "udp://syslog_server:514"
-                log-opt:
                 tag: prometheus
 
     grafana:
@@ -73,7 +70,6 @@ services:
             driver: syslog
             options:
                 syslog-address: "udp://syslog_server:514"
-                log-opt:
                 tag: grafana 
 
     rabbit:
@@ -90,7 +86,6 @@ services:
             driver: syslog
             options:
                 syslog-address: "udp://syslog_server:514"
-                log-opt:
                 tag: rabbit
 
     flower:
@@ -125,7 +120,6 @@ services:
             driver: syslog
             options:
                 syslog-address: "udp://syslog_server:514"
-                log-opt:
                 tag: jqueuer_manager
 
 networks:
