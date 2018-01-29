@@ -17,8 +17,10 @@ services:
         logging:
             driver: syslog
             options:
-                syslog-address: "udp://syslog_server:514"
+                syslog-address: "udp://localhost:514"
                 tag: redis
+        depends_on:
+            - syslog_server
 
     statsd:
         image: prom/statsd-exporter
@@ -32,8 +34,10 @@ services:
         logging:
             driver: syslog
             options:
-                syslog-address: "udp://syslog_server:514"
+                syslog-address: "udp://localhost:514"
                 tag: statsd
+        depends_on:
+            - syslog_server
 
     prometheus:
         image: prom/prometheus
@@ -50,8 +54,10 @@ services:
         logging:
             driver: syslog
             options:
-                syslog-address: "udp://syslog_server:514"
+                syslog-address: "udp://localhost:514"
                 tag: prometheus
+        depends_on:
+            - syslog_server
 
     grafana:
         image: grafana/grafana
@@ -69,8 +75,10 @@ services:
         logging:
             driver: syslog
             options:
-                syslog-address: "udp://syslog_server:514"
+                syslog-address: "udp://localhost:514"
                 tag: grafana 
+        depends_on:
+            - syslog_server
 
     rabbit:
         hostname: rabbit
@@ -85,8 +93,10 @@ services:
         logging:
             driver: syslog
             options:
-                syslog-address: "udp://syslog_server:514"
+                syslog-address: "udp://localhost:514"
                 tag: rabbit
+        depends_on:
+            - syslog_server
 
     flower:
         hostname: flower
@@ -101,8 +111,10 @@ services:
         logging:
             driver: syslog
             options:
-                syslog-address: "udp://syslog_server:514"
+                syslog-address: "udp://localhost:514"
                 tag: flower
+        depends_on:
+            - syslog_server
 
     jqueuer_manager:
         image: osabuoun/jqueuer_manager
@@ -119,8 +131,10 @@ services:
         logging:
             driver: syslog
             options:
-                syslog-address: "udp://syslog_server:514"
+                syslog-address: "udp://localhost:514"
                 tag: jqueuer_manager
+        depends_on:
+            - syslog_server
 
 networks:
     jqueuer_network:
