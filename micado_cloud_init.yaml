@@ -109,11 +109,11 @@ write_files:
 #    services:
 #      service_name1:
 #        scaledown: 20
-#        scaleup: 80
+#        scaleup: 60
 
 #      service_name2:
-#        scaledown: 10
-#        scaleup: 90
+#        scaledown: 20
+#        scaleup: 80
 
 # consul config
 - content: |
@@ -190,8 +190,17 @@ write_files:
       receiver: 'default'
       group_wait: 10s
       group_interval: 20s
-      repeat_interval: 40s
+      repeat_interval: 5m
       group_by: [alertname]
+
+      routes:
+      - receiver: 'default'
+        match:
+          type: docker
+        group_wait: 10s
+        group_interval: 20s
+        repeat_interval: 1m
+        group_by: [alertname]
     
     receivers:
     - name: 'default'
@@ -307,7 +316,6 @@ runcmd:
 # Update executor IP
   - export IP=$(hostname -I | cut -d\  -f1)
   - sed -i -e 's/hostIP/'$IP'/g' /etc/prometheus_executor/conf.sh
-  - sed -i -e 's/hostIP/'$IP'/g' /etc/prometheus/alert_generator.sh
 # Start infra. services
   - curl -L $GITHUB_URL/worker_node/templates/temp_auth_data.yaml --create-dirs -o /var/lib/micado/occopus/temp_auth_data.yaml
   - curl -L $GITHUB_URL/worker_node/templates/temp_node_definitions.yaml --create-dirs -o /var/lib/micado/occopus/temp_node_definitions.yaml
