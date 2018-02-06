@@ -323,7 +323,6 @@ runcmd:
   - curl -L $GITHUB_URL/worker_node/cloud_init_worker.yaml --create-dirs -o /etc/micado/occopus/nodes/cloud_init_worker.yaml
   - docker-compose -f /etc/micado/docker-compose.yml up -d
   - chmod 777 /etc/prometheus_executor/conf.sh
-  - chmod 777 /etc/prometheus/alert_generator.sh
   - docker network create -d bridge my-net --subnet 172.31.0.0/24
   - docker run -d --network=my-net --ip="172.31.0.2" -p 9090:9090 -v /etc/:/etc prom/prometheus:v1.8.2
   - docker run -d --network=my-net --ip="172.31.0.3" -v /etc/alertmanager/:/etc/alertmanager/ -p 9093:9093 prom/alertmanager:v0.12.0
