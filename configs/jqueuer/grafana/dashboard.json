@@ -605,10 +605,11 @@
               "legendFormat": "Deadline - {{experiment_id}}",
               "refId": "B"
             },
-            {
-              "expr": "",
+ 			{
+              "expr": "avg(jqueuer_experiment_actual_end_timestamp) by (experiment_id)",
               "format": "time_series",
               "intervalFactor": 2,
+              "legendFormat": "Actual End - {{experiment_id}}",
               "refId": "C"
             }
           ],
