@@ -612,6 +612,13 @@
               "legendFormat": "Actual End - {{experiment_id}}",
               "refId": "C"
             }
+ 			{
+              "expr": "avg(jqueuer_experiment_running_timestamp) by (experiment_id)",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "Running Time - {{experiment_id}}",
+              "refId": "D"
+            }
           ],
           "thresholds": [],
           "timeFrom": null,
