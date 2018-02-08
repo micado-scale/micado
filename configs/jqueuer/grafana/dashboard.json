@@ -100,21 +100,21 @@
               "refId": "A"
             },
             {
-              "expr": "count(jqueuer_job_started_count) By (experiment_id)",
+              "expr": "sum(jqueuer_job_started) By (experiment_id)",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "Started {{experiment_id}}",
               "refId": "D"
             },
             {
-              "expr": "count(jqueuer_job_running_count) By (experiment_id)",
+              "expr": "sum(jqueuer_job_running) By (experiment_id)",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "Running {{experiment_id}}",
               "refId": "E"
             },
             {
-              "expr": "count(jqueuer_job_accomplished_count) By (experiment_id)",
+              "expr": "count(jqueuer_job_accomplished) By (experiment_id)",
               "format": "time_series",
               "instant": false,
               "interval": "",
@@ -123,7 +123,7 @@
               "refId": "B"
             },
             {
-              "expr": "count(jqueuer_job_failed_count) By (experiment_id)",
+              "expr": "count(jqueuer_job_failed) By (experiment_id)",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "Failed {{experiment_id}}",
@@ -304,21 +304,21 @@
               "refId": "A"
             },
             {
-              "expr": "count(jqueuer_task_started_count) By (experiment_id)",
+              "expr": "sum(jqueuer_task_started) By (experiment_id)",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "Started - {{experiment_id}}",
               "refId": "B"
             },
             {
-              "expr": "count(jqueuer_task_running_count) By (experiment_id)",
+              "expr": "sum(jqueuer_task_running) By (experiment_id)",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "Running - {{experiment_id}}",
               "refId": "C"
             },
             {
-              "expr": "count(jqueuer_task_accomplished_count) By (experiment_id)",
+              "expr": "count(jqueuer_task_accomplished) By (experiment_id)",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "Accomplished - {{experiment_id}}",
