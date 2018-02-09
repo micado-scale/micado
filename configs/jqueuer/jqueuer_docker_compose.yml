@@ -8,6 +8,22 @@ services:
         networks:
             jqueuer_network:
 
+    syslog_server_jqagent:
+        image: jumanjiman/rsyslog
+        ports:
+            - 5514:514
+            - 5514:514/udp
+        networks:
+            jqueuer_network:
+
+    syslog_server_service:
+        image: jumanjiman/rsyslog
+        ports:
+            - 7514:514
+            - 7514:514/udp
+        networks:
+            jqueuer_network:
+
     redis:
         image: "redis:alpine"
         ports:
