@@ -103,6 +103,5 @@ runcmd:
   - export IP=$(hostname -I | cut -d\  -f1)
   - sudo docker run -d --net=host -e 'CONSUL_LOCAL_CONFIG={"leave_on_terminate":true}' -p 8301:8301 -p 8301:8301/udp -p 8300:8300 -p 8302:8302 -p 8302:8302/udp -p 8400:8400 -p 8500:8500 -p 8600:8600/udp -v /etc/consul/:/etc/consul consul:1.0.0 agent -advertise=$IP -retry-join={{variables.master_host_ip}} -config-file=/etc/consul/config.json 
   - sudo docker run  --volume=/:/rootfs:ro  --volume=/var/run:/var/run:rw  --volume=/sys:/sys:ro  --volume=/var/lib/docker/:/var/lib/docker:ro  --publish=9200:8080  --detach=true  --name=cadvisor google/cadvisor:v0.28.3
-  - sudo docker run -d -e "NODE_ID=$(hostname)" --net=jqueuer_network --name jqueuing_manager_$IP -v /var/run/docker.sock:/var/run/docker.sock -v $(which docker):/usr/bin/docker --log-driver syslog --log-opt syslog-address=udp://127.0.0.1:5514 --log-opt tag=$(hostname) osabuoun/jqueuer_agent
+  - sudo docker run -d -e "NODE_ID=$(hostname)" --net=jqueuer_network --name jqueuing_manager_$IP -v /var/run/docker.sock:/var/run/docker.sock -v $(which docker):/usr/bin/docker --log-driver syslog --log-opt syslog-address=udp://{{variables.master_host_ip}}:5514 --log-opt tag=$(hostname) osabuoun/jqueuer_agent
   - sudo docker run -d -p 9100:9100 prom/node-exporter:v0.15.2
-

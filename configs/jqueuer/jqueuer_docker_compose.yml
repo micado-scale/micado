@@ -122,7 +122,7 @@ services:
         networks:
             jqueuer_network:
         volumes:
-            - /etc/jqueuer/flower/:/opt/celery-flower/
+            - /etc/jqueuer/flower/:/opt/celery-flower/jqueuer/
         logging:
             driver: syslog
             options:
@@ -130,14 +130,13 @@ services:
                 tag: flower
         depends_on:
             - syslog_server
+        command:
+            - /opt/celery-flower/jqueuer/install.sh &
 
     jqueuer_manager:
         image: osabuoun/jqueuer_manager
         ports:
             - "8081:8081"
-        volumes:
-            - /usr/bin/docker:/usr/bin/docker
-            - /var/run/docker.sock:/var/run/docker.sock
         networks:
             jqueuer_network:
         volumes:
