@@ -291,7 +291,7 @@ runcmd:
   - resolvconf -u
   - echo nameserver 8.8.8.8 >> /etc/resolv.conf
 # Download config files
-  - export GITHUB_URL=https://raw.githubusercontent.com/micado-scale/micado/master
+  - export GITHUB_URL=https://raw.githubusercontent.com/micado-scale/micado/develop
   - curl -L $GITHUB_URL/configs/executor_config.sh --create-dirs -o /etc/prometheus_executor/conf.sh
   - curl -L $GITHUB_URL/configs/consul_checks.json --create-dirs -o /etc/consul/checks.json
 # Change health check ip address for host ip
