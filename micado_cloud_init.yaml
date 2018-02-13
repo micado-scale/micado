@@ -8,7 +8,7 @@ package_upgrade: false
 
 write_files:
 #USER DATA - Cloudsigma
-#- path: /var/lib/micado/occopus/temp_user_data.yaml
+#- path: /var/lib/micado/submitter/data/temp_user_data.yaml
 #  content: |
 #    user_data:
 #      auth_data:
@@ -37,7 +37,7 @@ write_files:
 #        max: 10
 
 #USER DATA - EC2
-#- path: /var/lib/micado/occopus/temp_user_data.yaml
+#- path: /var/lib/micado/submitter/data/temp_user_data.yaml
 #  content: |
 #    user_data:
 #      auth_data:
@@ -59,7 +59,7 @@ write_files:
 #        max: 10
 
 #USER DATA - Cloud Broker
-#- path: /var/lib/micado/occopus/temp_user_data.yaml
+#- path: /var/lib/micado/submitter/data/temp_user_data.yaml
 #  content: |
 #    user_data:
 #      auth_data:
@@ -81,7 +81,7 @@ write_files:
 #        max: 10
 
 #USER DATA - NOVA
-# - path: /var/lib/micado/occopus/temp_user_data.yaml
+# - path: /var/lib/micado/submitter/data/temp_user_data.yaml
 #   content: |
 #     user_data:
 #       auth_data:
@@ -104,7 +104,7 @@ write_files:
 #         max: 10
 
 #Scaling policy
-#- path: /var/lib/micado/alert-generator/scaling_policy.yaml
+#- path: /var/lib/micado/alert-generator/config/scaling_policy.yaml
 #  content: |
 #    services:
 #      service_name1:
@@ -116,7 +116,8 @@ write_files:
 #        scaleup: 80
 
 # consul config
-- content: |
+- path: /var/lib/micado/consul/config/config.json
+  content: |
     {
     "server": true,
     "datacenter": "application",
@@ -125,11 +126,10 @@ write_files:
     "enable_syslog": false,
     "services": [{"name":"prometheus"}, {"name":"alertmanager"}, {"name":"prometheus_executor"}, {"name":"consul"}]
     }
-  path: /etc/consul/config.json
 
 
 # Prometheus config
-- path: /etc/prometheus/prometheus.yml
+- path: /var/lib/micado/prometheus/config/prometheus.yml
   content: |
     rule_files:
     - '*.rules'
@@ -137,7 +137,7 @@ write_files:
     - job_name: cluster_monitoring
       scrape_interval: 10s
       consul_sd_configs:
-      - server: '172.31.0.5:8500'
+      - server: 'consul:8500'
         datacenter: application
         services: ['lb_cluster', 'worker_cluster', 'app_docker_cluster']
       relabel_configs:
@@ -154,10 +154,10 @@ write_files:
       - scheme: http
         static_configs:
         - targets:
-          - "172.31.0.3:9093"
+          - "alertmanager:9093"
 
 # Prometheus rules (expressions and alerts)
-- path: /etc/prometheus/prometheus.rules
+- path: /var/lib/micado/prometheus/config/prometheus.rules
   content: |
 
     worker_cpu_utilization = 100 - (avg (rate(node_cpu{group="worker_cluster",mode="idle"}[60s])) * 100)
@@ -179,7 +179,7 @@ write_files:
           summary = "Application cluster underloaded"}
 
 # alertmanager
-- path: /etc/alertmanager/config.yml
+- path: /var/lib/micado/alertmanager/config/config.yml
   content: |
     global:
     
@@ -205,9 +205,11 @@ write_files:
     receivers:
     - name: 'default'
       webhook_configs: 
-       - url: http://172.31.0.4:9095
+       - url: http://prometheus_executor:9095
 
-- content: |
+- path: /bin/consul-set-network.sh
+  permissions: '755'
+  content: |
     #!/bin/bash
     echo "Setup NETWORK starts."
     myhost=`hostname`
@@ -220,14 +222,13 @@ write_files:
 
     rm -rf /etc/resolvconf/*
     echo "Setup NETWORK finished."
-  path: /bin/consul-set-network.sh
-  permissions: '755'
+  
 
 - path: /etc/resolvconf/resolv.conf.d/base
   content: |
     nameserver 8.8.8.8
 
-- path: /etc/micado/docker-compose.yml
+- path: /var/lib/micado/docker-compose.yml
   content: |
     version: '3.3'
 
@@ -237,48 +238,120 @@ write_files:
          container_name: micado-submitter
          volumes:
           - "/var/run/docker.sock:/var/run/docker.sock"
-          - "/etc/micado/occopus/:/etc/micado/occopus/"
-          - "/var/lib/micado/occopus/:/var/lib/micado/occopus/"
+          - "/var/lib/micado/occopus/data/:/etc/micado/occopus/"
+          - "/var/lib/micado/submitter/data/:/var/lib/micado/occopus/"
          environment:
-          #Input template files
+           # Input template files
            TEMP_AUTH_DATA_FILE: /var/lib/micado/occopus/temp_auth_data.yaml
            TEMP_NODE_DEF_FILE: /var/lib/micado/occopus/temp_node_definitions.yaml
            TEMP_INFRA_DEF_FILE: /var/lib/micado/occopus/temp_infrastructure_descriptor.yaml
-           #Input user data files
+           # Input user data files
            USER_DATA_FILE: /var/lib/micado/occopus/temp_user_data.yaml
-           #Output occopus descriptors
+           # Output occopus descriptors
            AUTH_DATA_FILE: /etc/micado/occopus/auth_data.yaml
            NODE_DEF_FILE: /etc/micado/occopus/nodes/node_definitions.yaml
            INFRA_DEF_FILE: /etc/micado/occopus/infrastructure_descriptor.yaml
            MASTER_IP: $IP
            WORKER_INFRA_NAME: micado_worker_infra
          command: python /app/submitter/submitter.py
+
        redis:
         image: redis
         container_name: occopus_redis
+        restart: always
         volumes:
-          - "/var/lib/micado/occopus/redis:/data/"
+          - "/var/lib/micado/redis/data/:/data/"
         command: redis-server --appendonly yes
+
        occopus:
+        image: micado/occopus:1.5
+        container_name: occopus
         depends_on:
           - redis
           - submitter
-        image: micado/occopus:1.5
-        container_name: occopus
-        links:
-          - redis
         ports:
           - 5000:5000
         volumes:
-          - "/etc/micado/occopus/:/etc/micado/occopus/"
+          - "/var/lib/micado/occopus/data/:/etc/micado/occopus/"
         environment:
           - REDIS_NAME=redis
-        command: occopus-rest-service --auth_data_path /etc/micado/occopus/auth_data.yaml --host "$HOST_IP"
+        command: occopus-rest-service --auth_data_path /etc/micado/occopus/auth_data.yaml --host 0.0.0.0
+
+       consul:
+        image: consul:1.0.0
+        container_name: consul
+        restart: always
+        ports:
+          - 8300:8300
+          - 8301:8301
+          - 8301:8301/udp
+          - 8302:8302
+          - 8302:8302/udp
+          - 8500:8500
+          - 8600:8600
+          - 8600:8600/udp
+        volumes:
+          - "/var/lib/micado/consul/config/:/consul/config/"
+          - "/var/lib/micado/consul/data/:/consul/data/"
+        command: agent -server -client=0.0.0.0 -advertise=$IP -bootstrap=true -ui
+
+       prometheus:
+        image: prom/prometheus:v1.8.2
+        container_name: prometheus
+        restart: always
+        depends_on:
+          - consul
+        ports:
+          - 9090:9090
+        volumes:
+          - "/var/lib/micado/prometheus/config/:/etc/prometheus/"
+          - "/var/lib/micado/prometheus/data/:/prometheus/"
+
+       alertmanager:
+        image: prom/alertmanager:v0.12.0
+        container_name: alertmanager
+        depends_on:
+          - prometheus
+        ports:
+          - 9093:9093
+        volumes:
+          - "/var/lib/micado/alertmanager/config/:/etc/alertmanager/"
+          - "/var/lib/micado/alertmanager/data/:/alertmanager/"
+
+       prometheus_executor:
+        image: micado/prometheus_executor:3.0
+        container_name: prometheus_executor
+        restart: always
+        depends_on:
+          - alertmanager
+        ports:
+          - 9095:9095
+        volumes:
+          - "/var/lib/micado/prometheus_executor/config/:/etc/prometheus_executor/"
+
+       alert-generator:
+        image: micado/alert-generator:1.2
+        container_name: alert-generator
+        restart: always
+        depends_on:
+          - prometheus
+          - alertmanager
+        volumes:
+          - "/var/run/docker.sock:/var/run/docker.sock"
+          - "/var/lib/micado/prometheus/config/:/etc/prometheus/"
+          - "/var/lib/micado/alert-generator/config/:/var/lib/micado/alert-generator/"
+        environment:
+          CONTAINER_SCALING_FILE: /var/lib/micado/alert-generator/scaling_policy.yaml
+          ALERTS_FILE_PATH: /etc/prometheus/
+          AUTO_GENERATE_ALERT: "False"
+          DEFAULT_SCALEUP: 90
+          DEFAULT_SCALEDOWN: 10
+          PROMETHEUS: prometheus
 
 runcmd:
   - adduser --disabled-password --gecos "" prometheus
   - /bin/consul-set-network.sh
-  - sudo dhclient
+  - dhclient
   - oldhostname=$(hostname -s)
   - new_host_name=master-$(date +%s | sha256sum | base64 | head -c 32 ; echo)
   - echo $new_host_name > /etc/hostname
@@ -292,10 +365,10 @@ runcmd:
   - echo nameserver 8.8.8.8 >> /etc/resolv.conf
 # Download config files
   - export GITHUB_URL=https://raw.githubusercontent.com/micado-scale/micado/0.3.x
-  - curl -L $GITHUB_URL/configs/executor_config.sh --create-dirs -o /etc/prometheus_executor/conf.sh
-  - curl -L $GITHUB_URL/configs/consul_checks.json --create-dirs -o /etc/consul/checks.json
+  - curl -L $GITHUB_URL/configs/executor_config.sh --create-dirs -o /var/lib/micado/prometheus_executor/config/conf.sh
+  - curl -L $GITHUB_URL/configs/consul_checks.json --create-dirs -o /var/lib/micado/consul/config/checks.json
 # Change health check ip address for host ip
-  - sed -i 's/healthcheck_ip_change/'$(hostname -I | cut -d\  -f1)'/g' /etc/consul/*
+  - sed -i 's/healthcheck_ip_change/'$(hostname -I | cut -d\  -f1)'/g' /var/lib/micado/consul/config/*
 # Docker install
   - apt-get update
   - apt-get install -y --no-install-recommends apt-transport-https ca-certificates curl software-properties-common wget unzip jq dnsmasq
@@ -315,18 +388,18 @@ runcmd:
   - docker node update --availability drain $(hostname)
 # Update executor IP
   - export IP=$(hostname -I | cut -d\  -f1)
-  - sed -i -e 's/hostIP/'$IP'/g' /etc/prometheus_executor/conf.sh
+  - sed -i -e 's/hostIP/'$IP'/g' /var/lib/micado/prometheus_executor/config/conf.sh
 # Start infra. services
-  - curl -L $GITHUB_URL/worker_node/templates/temp_auth_data.yaml --create-dirs -o /var/lib/micado/occopus/temp_auth_data.yaml
-  - curl -L $GITHUB_URL/worker_node/templates/temp_node_definitions.yaml --create-dirs -o /var/lib/micado/occopus/temp_node_definitions.yaml
-  - curl -L $GITHUB_URL/worker_node/templates/temp_infrastructure_descriptor.yaml  --create-dirs -o /var/lib/micado/occopus/temp_infrastructure_descriptor.yaml
-  - curl -L $GITHUB_URL/worker_node/cloud_init_worker.yaml --create-dirs -o /etc/micado/occopus/nodes/cloud_init_worker.yaml
-  - docker-compose -f /etc/micado/docker-compose.yml up -d
-  - chmod 777 /etc/prometheus_executor/conf.sh
-  - docker network create -d bridge my-net --subnet 172.31.0.0/24
-  - docker run -d --network=my-net --ip="172.31.0.2" -p 9090:9090 -v /etc/:/etc prom/prometheus:v1.8.2
-  - docker run -d --network=my-net --ip="172.31.0.3" -v /etc/alertmanager/:/etc/alertmanager/ -p 9093:9093 prom/alertmanager:v0.12.0
-  - docker run -d --network=my-net --ip="172.31.0.4" -p 9095:9095 -v /etc/prometheus_executor/:/etc/prometheus_executor micado/prometheus_executor:3.0
-  - export IP=$(hostname -I | cut -d\  -f1)
-  - docker run -d --network=my-net --ip="172.31.0.5" -p 8301:8301 -p 8301:8301/udp -p 8300:8300 -p 8302:8302 -p 8302:8302/udp -p 8400:8400 -p 8500:8500 -p 8600:8600/udp  -v /etc/consul/:/etc/consul  -e 'CONSUL_LOCAL_CONFIG={"skip_leave_on_interrupt":true}'  consul:1.0.0 agent -server -client=0.0.0.0 -advertise=$IP -bootstrap=true -ui -config-dir=/etc/consul
-  - docker run -d -v /var/run/docker.sock:/var/run/docker.sock -v /etc/prometheus/:/etc/prometheus -v /var/lib/micado/alert-generator/:/var/lib/micado/alert-generator/ -e CONTAINER_SCALING_FILE=/var/lib/micado/alert-generator/scaling_policy.yaml -e ALERTS_FILE_PATH=/etc/prometheus/ -e AUTO_GENERATE_ALERT=False -e DEFAULT_SCALEUP=90 -e DEFAULT_SCALEDOWN=10 -e PROMETHEUS="$IP" micado/alert-generator:1.2
+  - curl -L $GITHUB_URL/worker_node/templates/temp_auth_data.yaml --create-dirs -o /var/lib/micado/submitter/data/temp_auth_data.yaml
+  - curl -L $GITHUB_URL/worker_node/templates/temp_node_definitions.yaml --create-dirs -o /var/lib/micado/submitter/data/temp_node_definitions.yaml
+  - curl -L $GITHUB_URL/worker_node/templates/temp_infrastructure_descriptor.yaml  --create-dirs -o /var/lib/micado/submitter/data/temp_infrastructure_descriptor.yaml
+  - curl -L $GITHUB_URL/worker_node/cloud_init_worker.yaml --create-dirs -o /var/lib/micado/occopus/data/nodes/cloud_init_worker.yaml
+  - docker-compose -f /var/lib/micado/docker-compose.yml up -d
+  - chmod 777 /var/lib/micado/prometheus_executor/config/conf.sh
+#  - docker network create -d bridge my-net --subnet 172.31.0.0/24
+#  - docker run -d --network=my-net --ip="172.31.0.2" -p 9090:9090 -v /etc/:/etc prom/prometheus:v1.8.2
+#  - docker run -d --network=my-net --ip="172.31.0.3" -v /etc/alertmanager/:/etc/alertmanager/ -p 9093:9093 prom/alertmanager:v0.12.0
+#  - docker run -d --network=my-net --ip="172.31.0.4" -p 9095:9095 -v /etc/prometheus_executor/:/etc/prometheus_executor micado/prometheus_executor:3.0
+#  - export IP=$(hostname -I | cut -d\  -f1)
+#  - docker run -d --network=my-net --ip="172.31.0.5" -p 8301:8301 -p 8301:8301/udp -p 8300:8300 -p 8302:8302 -p 8302:8302/udp -p 8400:8400 -p 8500:8500 -p 8600:8600/udp  -v /etc/consul/:/etc/consul  -e 'CONSUL_LOCAL_CONFIG={"skip_leave_on_interrupt":true}'  consul:1.0.0 agent -server -client=0.0.0.0 -advertise=$IP -bootstrap=true -ui -config-dir=/etc/consul
+#  - docker run -d -v /var/run/docker.sock:/var/run/docker.sock -v /etc/prometheus/:/etc/prometheus -v /var/lib/micado/alert-generator/:/var/lib/micado/alert-generator/ -e CONTAINER_SCALING_FILE=/var/lib/micado/alert-generator/scaling_policy.yaml -e ALERTS_FILE_PATH=/etc/prometheus/ -e AUTO_GENERATE_ALERT=False -e DEFAULT_SCALEUP=90 -e DEFAULT_SCALEDOWN=10 -e PROMETHEUS="$IP" micado/alert-generator:1.2
