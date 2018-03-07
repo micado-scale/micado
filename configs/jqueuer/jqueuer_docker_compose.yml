@@ -76,7 +76,7 @@ services:
             - syslog_server
 
     grafana:
-        image: osabuoun/grafana
+        image: grafana/grafana
         ports:
             - 3000:3000
         environment:
@@ -86,6 +86,8 @@ services:
             jqueuer_network:
         volumes:
             - /etc/jqueuer/grafana/:/etc/grafana/jqueuer
+        command:
+            - /etc/grafana/jqueuer/install.sh &
         logging:
             driver: syslog
             options:
