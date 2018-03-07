@@ -76,18 +76,16 @@ services:
             - syslog_server
 
     grafana:
-        image: grafana/grafana
+        image: osabuoun/grafana
         ports:
             - 3000:3000
         environment:
-            - GF_SECURITY_ADMIN_PASSWORD=f4c85f99a0
+            - GF_SECURITY_ADMIN_PASSWORD=jqueuer
             - GF_USERS_ALLOW_SIGN_UP=false
         networks:
             jqueuer_network:
         volumes:
             - /etc/jqueuer/grafana/:/etc/grafana/jqueuer
-        command:
-            - /etc/grafana/jqueuer/install.sh &
         logging:
             driver: syslog
             options:
