@@ -605,14 +605,14 @@
               "legendFormat": "Deadline - {{experiment_id}}",
               "refId": "B"
             },
- 			{
+      {
               "expr": "avg(jqueuer_experiment_actual_end_timestamp) by (experiment_id)",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "Actual End - {{experiment_id}}",
               "refId": "C"
             },
- 			{
+      {
               "expr": "avg(jqueuer_experiment_running_timestamp) by (experiment_id)",
               "format": "time_series",
               "intervalFactor": 2,
@@ -665,14 +665,15 @@
       "titleSize": "h6"
     }
   ],
+  "refresh": "1m",
   "schemaVersion": 14,
-  "style": "dark",
+  "style": "light",
   "tags": [],
   "templating": {
     "list": []
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-30m",
     "to": "now"
   },
   "timepicker": {
