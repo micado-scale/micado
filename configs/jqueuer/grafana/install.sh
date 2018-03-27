@@ -12,3 +12,4 @@ done
 echo "Grafana is up - executing command"
 curl --header "Content-Type: application/json" --data @/etc/jqueuer/grafana/datasource.json http://admin:jqueuer@127.0.0.1:3000/api/datasources/
 curl --header "Content-Type: application/json" --data @/etc/jqueuer/grafana/dashboard.json http://admin:jqueuer@127.0.0.1:3000/api/dashboards/db
+curl --header "Content-Type: application/json" --data @/etc/jqueuer/grafana/job_dashboard.json http://admin:jqueuer@127.0.0.1:3000/api/dashboards/db
