@@ -52,7 +52,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1522167311787,
+  "iteration": 1522228911161,
   "links": [],
   "panels": [
     {
@@ -61,9 +61,10 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "jqueuer_prometheus",
+      "decimals": 5,
       "fill": 1,
       "gridPos": {
-        "h": 9,
+        "h": 7,
         "w": 24,
         "x": 0,
         "y": 0
@@ -77,6 +78,7 @@
         "min": false,
         "rightSide": true,
         "show": true,
+        "sideWidth": null,
         "sort": null,
         "sortDesc": null,
         "total": false,
@@ -96,7 +98,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "jqueuer_job_accomplished_latency",
+          "expr": "jqueuer_job_accomplished_duration",
           "format": "time_series",
           "instant": false,
           "intervalFactor": 1,
@@ -107,7 +109,7 @@
       "thresholds": [],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Job Latency",
+      "title": "Job Duration",
       "tooltip": {
         "shared": false,
         "sort": 0,
@@ -125,8 +127,103 @@
       },
       "yaxes": [
         {
+          "decimals": 2,
+          "format": "short",
+          "label": "Duration",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
           "format": "short",
           "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ]
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "jqueuer_prometheus",
+      "decimals": 5,
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 7
+      },
+      "id": 37,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": false,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 4,
+      "points": true,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "job_id_0 -  task_id_0",
+          "points": true
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jqueuer_task_accomplished_duration",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "{{job_id}}-{{task_id}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Task Duration",
+      "tooltip": {
+        "shared": false,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "series",
+        "name": null,
+        "show": true,
+        "values": [
+          "current"
+        ]
+      },
+      "yaxes": [
+        {
+          "decimals": 2,
+          "format": "short",
+          "label": "Duration",
           "logBase": 1,
           "max": null,
           "min": null,
@@ -147,10 +244,10 @@
       "datasource": "jqueuer_prometheus",
       "fontSize": "100%",
       "gridPos": {
-        "h": 7,
+        "h": 5,
         "w": 8,
         "x": 0,
-        "y": 9
+        "y": 14
       },
       "id": 2,
       "links": [],
@@ -181,7 +278,7 @@
           "decimals": 15,
           "pattern": "/.*/",
           "thresholds": [],
-          "type": "number",
+          "type": "string",
           "unit": "short"
         }
       ],
@@ -204,12 +301,12 @@
           "refId": "B"
         },
         {
-          "expr": "jqueuer_job_accomplished_latency{job_id='[[job_ids_var]]'}",
+          "expr": "jqueuer_job_accomplished_duration{job_id='[[job_ids_var]]'}",
           "format": "time_series",
           "instant": true,
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "Accomplished Latency",
+          "legendFormat": "Accomplished Duration",
           "refId": "E"
         },
         {
@@ -221,11 +318,11 @@
           "refId": "C"
         },
         {
-          "expr": "jqueuer_job_failed_latency{job_id='[[job_ids_var]]'}",
+          "expr": "jqueuer_job_failed_duration{job_id='[[job_ids_var]]'}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
-          "legendFormat": "Failed - Latency",
+          "legendFormat": "Failed - Duration",
           "refId": "D"
         }
       ],
@@ -238,10 +335,10 @@
       "datasource": "jqueuer_prometheus",
       "fontSize": "100%",
       "gridPos": {
-        "h": 7,
+        "h": 5,
         "w": 9,
         "x": 8,
-        "y": 9
+        "y": 14
       },
       "id": 33,
       "links": [],
@@ -272,54 +369,54 @@
           "decimals": 15,
           "pattern": "/.*/",
           "thresholds": [],
-          "type": "number",
+          "type": "string",
           "unit": "short"
         }
       ],
       "targets": [
         {
           "expr": "jqueuer_task_started_timestamp{job_id='[[job_ids_var]]'}",
-          "format": "table",
+          "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
-          "legendFormat": "Started",
+          "legendFormat": "{{task_id}} - Started",
           "refId": "B"
         },
         {
           "expr": "jqueuer_task_accomplished_timestamp{job_id='[[job_ids_var]]'}",
-          "format": "table",
+          "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
-          "legendFormat": "Accomplished",
+          "legendFormat": "{{task_id}} - Accomplished",
           "refId": "A"
         },
         {
-          "expr": "jqueuer_task_accomplished_latency{job_id='[[job_ids_var]]'}",
-          "format": "table",
+          "expr": "jqueuer_task_accomplished_duration{job_id='[[job_ids_var]]'}",
+          "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
-          "legendFormat": "Accomplished - Latency",
+          "legendFormat": "{{task_id}} - Accomplished - Duration",
           "refId": "C"
         },
         {
           "expr": "jqueuer_task_failed_timestamp{job_id='[[job_ids_var]]'}",
-          "format": "table",
+          "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
-          "legendFormat": "Failed",
+          "legendFormat": "{{task_id}} - Failed",
           "refId": "D"
         },
         {
-          "expr": "jqueuer_task_failed_latency{job_id='[[job_ids_var]]'}",
-          "format": "table",
+          "expr": "jqueuer_task_failed_duration{job_id='[[job_ids_var]]'}",
+          "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
-          "legendFormat": "Failed - Latency",
+          "legendFormat": "{{task_id}} - Failed - Duration",
           "refId": "F"
         }
       ],
       "title": "[[job_ids_var]] - Task(s)",
-      "transform": "table",
+      "transform": "timeseries_to_rows",
       "type": "table"
     },
     {
@@ -330,10 +427,10 @@
       "datasource": "jqueuer_prometheus",
       "fill": 1,
       "gridPos": {
-        "h": 7,
+        "h": 5,
         "w": 7,
         "x": 17,
-        "y": 9
+        "y": 14
       },
       "id": 35,
       "legend": {
@@ -363,7 +460,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "jqueuer_task_accomplished_latency{job_id='[[job_ids_var]]'}",
+          "expr": "jqueuer_task_accomplished_duration{job_id='[[job_ids_var]]'}",
           "format": "time_series",
           "instant": false,
           "intervalFactor": 1,
@@ -374,7 +471,7 @@
       "thresholds": [],
       "timeFrom": null,
       "timeShift": null,
-      "title": "[[job_ids_var]] - Task Latency",
+      "title": "[[job_ids_var]] - Task Duration",
       "tooltip": {
         "shared": false,
         "sort": 0,
@@ -439,7 +536,7 @@
     ]
   },
   "time": {
-    "from": "now-3h",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {
