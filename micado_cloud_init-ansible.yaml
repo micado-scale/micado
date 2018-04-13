@@ -1,0 +1,45 @@
+#cloud-config
+apt_upgrade: false
+apt_update: false
+manage_etc_hosts: false
+package_update: false
+package_upgrade: false
+
+packages:
+- ansible
+- git
+
+write_files:
+# CUSTOMIZE THIS
+- path: /etc/ansible/user_data.yml
+  content: |
+    user_data:
+      type: ec2 # or: nova, cloudbroker, cloudsigma
+      auth_data:
+        user: <USER> # contains accesskey for ec2, email for cloudbroker, etc.
+        password: <PASSWORD> # contains secretkey for ec2, password for else
+      resource:
+        ec2:
+          regionname: ROOT
+          endpoint: https://opennebula.lpds.sztaki.hu:4567 
+          image_id: ami-00000450
+          instance_type: m1.small
+          key_name:  
+          security_group_ids: 
+            - 
+        nova: # TODO
+          foo: bar 
+        cloudbroker: # TODO
+          foo: bar 
+        cloudsigma: # TODO
+          foo: bar
+      scaling:
+        min: 1
+        max: 10
+
+runcmd:
+- echo "[localhost]" >> /etc/ansible/hosts
+- echo "127.0.0.1 ansible_connection=local" >> /etc/ansible/hosts
+- ssh-keyscan github.com >> /etc/ssh/ssh_known_hosts
+- mkdir -p /etc/ansible/web
+- ansible-pull -vvv -d /etc/ansible/web/ -U https://github.com/micado-scale/ansible-micado.git -C 0.3.x micado-master.yml
