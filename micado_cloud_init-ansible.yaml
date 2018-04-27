@@ -11,7 +11,7 @@ packages:
 
 write_files:
 # CUSTOMIZE THIS
-- path: /etc/ansible/user_data.yml
+- path: /var/lib/micado/ansible_user_data.yml
   content: |
     user_data:
       type: ec2 # or: nova, cloudbroker, cloudsigma
@@ -21,16 +21,16 @@ write_files:
       resource:
         ec2:
           regionname: ROOT
-          endpoint: https://opennebula.lpds.sztaki.hu:4567 
+          endpoint: https://opennebula.lpds.sztaki.hu:4567
           image_id: ami-00000450
           instance_type: m1.small
-          key_name:  
-          security_group_ids: 
-            - 
+          key_name:
+          security_group_ids:
+            -
         nova: # TODO
-          foo: bar 
+          foo: bar
         cloudbroker: # TODO
-          foo: bar 
+          foo: bar
         cloudsigma: # TODO
           foo: bar
       scaling:
@@ -38,8 +38,6 @@ write_files:
         max: 10
 
 runcmd:
-- echo "[localhost]" >> /etc/ansible/hosts
-- echo "127.0.0.1 ansible_connection=local" >> /etc/ansible/hosts
-- ssh-keyscan github.com >> /etc/ssh/ssh_known_hosts
-- mkdir -p /etc/ansible/web
-- ansible-pull -vvv -d /etc/ansible/web/ -U https://github.com/micado-scale/ansible-micado.git -C 0.3.x micado-master.yml
+- mkdir -p /etc/ansible/web && cd /etc/ansible/web
+- ansible-pull -vvv -d /etc/ansible/web/ -U https://github.com/micado-scale/ansible-micado.git -C 0.3.x -i hosts update-ansible.yml
+- ansible-playbook -vvv -i hosts micado-master.yml
