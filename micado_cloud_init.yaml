@@ -7,101 +7,34 @@ package_upgrade: false
 
 
 write_files:
-#USER DATA - Cloudsigma
-#- path: /var/lib/micado/occopus/temp_user_data.yaml
-#  content: |
-#    user_data:
-#      auth_data:
-#        type: cloudsigma
-#        email: YOUR_EMAIL
-#        password: YOUR_PASSWORD
-#
-#      resource:
-#        type: cloudsigma
-#        endpoint: YOUR_ENDPOINT
-#        libdrive_id: UBUNTU_16.04_IMAGE_ID
-#        description:
-#            cpu: 1000
-#            mem: 1073741824
-#            vnc_password: secret
-#            pubkeys:
-#                -
-#                    KEY_UUID
-#            nics:
-#                -
-#                     ip_v4_conf:
-#                        conf: dhcp
-#
-#      scaling:
-#        min: 1
-#        max: 10
+#USER DATA
+- path: /var/lib/micado/occopus/temp_user_data.yaml
+  content: |
+    user_data:
+      auth_data:
+        type: cloudsigma
+        email: ******************
+        password: ****************
 
-#USER DATA - EC2
-#- path: /var/lib/micado/occopus/temp_user_data.yaml
-#  content: |
-#    user_data:
-#      auth_data:
-#        type: ec2
-#        accesskey: YOUR_ACCESS_KEY
-#        secretkey: YOUR_SECRET_KEY
+      resource:
+        type: cloudsigma
+        endpoint: https://zrh.cloudsigma.com/api/2.0
+        libdrive_id:  87ce928e-e0bc-4cab-9502-514e523783e3 
+        description:
+            cpu: 2000
+            mem: 2147483648
+            vnc_password: secret
+            pubkeys:
+                -
+                    be3e3476-3f9c-4dea-9f2a-fbef32448609
+            nics:
+                -
+                     ip_v4_conf:
+                        conf: dhcp
 
-#      resource:
-#        type: ec2
-#        endpoint: YOUR_ENDPOINT
-#        regionname: YOUR_REGION
-#        image_id: UBUNTU_16.04_IMAGE_ID
-#        instance_type: YOUR_INSTANCE_TYPE
-#        key_name: YOUR_KEY_NAME 
-#        security_group_ids:
-#            - YOUR_SECURITY_GROUP_ID
-#      scaling:
-#        min: 1
-#        max: 10
-
-#USER DATA - Cloud Broker
-#- path: /var/lib/micado/occopus/temp_user_data.yaml
-#  content: |
-#    user_data:
-#      auth_data:
-#        type: cloudbroker
-#        email: YOUR_CLOUDBROKER_EMAIL
-#        password: YOUR_CLOUDBROKER_PASSWORD
-
-#      resource:
-#        type: cloudbroker
-#        endpoint: YOUR_ENDPOINT
-#        description: 
-#          deployment_id: YOUR_DEPLOYMENT_ID
-#          instance_type_id: YOUR_INSTANCE_TYPE_ID
-#          key_pair_id: YOUR_KEY_PAIR_ID
-#          opened_port: PORTS_TO_BE_OPENED # 80, 443, 22, 53, 2375, 2377, 7946, 8080, 8300, 8301, 8302, 8400, 8500, 8600, 9090, 9093, 9095, 9100, 9200
-#
-#      scaling:
-#        min: 1
-#        max: 10
-
-#USER DATA - NOVA
-# - path: /var/lib/micado/occopus/temp_user_data.yaml
-#   content: |
-#     user_data:
-#       auth_data:
-#         type: nova
-#         username: YOUR_USERNAME
-#         password: YOUR_PASSWORD
-
-#       resource:
-#         type: nova
-#         endpoint: YOUR_ENDPOINT
-#         network_id: YOUR_NETWORK_ID
-#         image_id: UBUNTU_16.04_IMAGE_ID
-#         flavor_name: YOUR_FLAVOUR_TYPE
-#         server_name: WORKER_NODE
-#         key_name: YOUR_KEYNAME
-#         security_groups: [YOUR_SECURITY_GROUP_ID]
-
-#       scaling:
-#         min: 1
-#         max: 10
+      scaling:
+        min: 2
+        max: 2
 
 # consul config
 - content: |
@@ -353,7 +286,7 @@ runcmd:
   - resolvconf -u
   - echo nameserver 8.8.8.8 >> /etc/resolv.conf
 #download config files
-  - export GITHUB_URL=https://raw.githubusercontent.com/micado-scale/micado/develop
+  - export GITHUB_URL=https://raw.githubusercontent.com/micado-scale/micado/0.4.x
   - curl -L $GITHUB_URL/configs/executor_config.sh --create-dirs -o /etc/prometheus_executor/conf.sh
   - curl -L $GITHUB_URL/configs/consul_checks.json --create-dirs -o /etc/consul/checks.json
 #change health check ip address for host ip
@@ -374,11 +307,26 @@ runcmd:
   - chmod +x /usr/local/bin/docker-compose
 # Start Swarm
   - docker swarm init --advertise-addr=$IP
-  - docker node update --availability drain $(hostname)
+  - docker network create --driver overlay --subnet 172.31.1.0/24 --gateway 172.31.1.1 --attachable jqueuer_network
 # update executor IP
   - export IP=$(hostname -I | cut -d\  -f1)
   - sed -i -e 's/hostIP/'$IP'/g' /etc/prometheus_executor/conf.sh
   - sed -i -e 's/hostIP/'$IP'/g' /etc/prometheus/alert_generator.sh
+
+#Init & Start JQUEUER
+  - curl -L $GITHUB_URL/configs/jqueuer/jqueuer_docker_compose.yml --create-dirs -o /etc/jqueuer/jqueuer_docker_compose.yml 
+  - curl -L $GITHUB_URL/configs/jqueuer/prometheus/prometheus.yml --create-dirs -o /etc/jqueuer/prometheus/prometheus.yml
+  - curl -L $GITHUB_URL/configs/jqueuer/grafana/datasource.json --create-dirs -o /etc/jqueuer/grafana/datasource.json
+  - curl -L $GITHUB_URL/configs/jqueuer/grafana/dashboard.json --create-dirs -o /etc/jqueuer/grafana/dashboard.json
+  - curl -L $GITHUB_URL/configs/jqueuer/grafana/job_dashboard.json --create-dirs -o /etc/jqueuer/grafana/job_dashboard.json
+  - curl -L $GITHUB_URL/configs/jqueuer/grafana/install.sh --create-dirs -o /etc/jqueuer/grafana/install.sh
+  - curl -L $GITHUB_URL/configs/jqueuer/flower/celeryconfig.py --create-dirs -o /etc/jqueuer/flower/celeryconfig.py
+  - curl -L $GITHUB_URL/configs/jqueuer/flower/flowerconfig.py --create-dirs -o /etc/jqueuer/flower/flowerconfig.py
+  - curl -L $GITHUB_URL/configs/jqueuer/flower/install.sh --create-dirs -o /etc/jqueuer/flower/install.sh
+  - chmod -R 777 /etc/jqueuer/
+  - chmod a+x /etc/jqueuer/grafana/install.sh
+  - docker-compose --file /etc/jqueuer/jqueuer_docker_compose.yml up -d
+
 #Start infra. services
   - curl -L $GITHUB_URL/worker_node/templates/temp_auth_data.yaml --create-dirs -o /var/lib/micado/occopus/temp_auth_data.yaml
   - curl -L $GITHUB_URL/worker_node/templates/temp_node_definitions.yaml --create-dirs -o /var/lib/micado/occopus/temp_node_definitions.yaml
@@ -395,3 +343,6 @@ runcmd:
   - docker run -d --network=my-net --ip="172.31.0.5" -p 8301:8301 -p 8301:8301/udp -p 8300:8300 -p 8302:8302 -p 8302:8302/udp -p 8400:8400 -p 8500:8500 -p 8600:8600/udp  -v /etc/consul/:/etc/consul  -e 'CONSUL_LOCAL_CONFIG={"skip_leave_on_interrupt":true}'  consul:1.0.0 agent -server -client=0.0.0.0 -advertise=$IP -bootstrap=true -ui -config-dir=/etc/consul
   - docker run -d -v /etc/prometheus/:/etc/prometheus micado/alert_generator:1.0
 
+# Drain the master
+  - docker node update --availability drain $(hostname)
+  - /etc/jqueuer/grafana/install.sh
