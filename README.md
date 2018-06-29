@@ -16,6 +16,6 @@ This version launches JQueuer Manager and JQueuer Agent with MiCADO Infra.
 
 6- Visit Grafana on the link http://SERVER_IP_ADDRESS:3000 to view the status of the experiment (Username: admin, Password: jqueuer).
 
-7- Use the link http://SERVER_IP_ADDRESS:5000 to delete all MiCADO workers.
+7- Use the link http://SERVER_IP_ADDRESS:5000/infrastructures/micado_worker_infra to delete all MiCADO workers.
 
 8- All JQueuer componenets send their log to three logging containers on MiCADO master. In roder to deubg the JQueuer, COnnect via SSH to your server and show the log of the the syslog containers using docker log command. 
