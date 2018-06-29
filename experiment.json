@@ -1,0 +1,34 @@
+{
+    "image_url": "osabuoun/repast",
+    "replica_max": "20",
+    "experiment_deadline": "200#m",
+    "reserve_cpu": "0.1",
+    "reserve_memory": "200mb”,
+    "replica_min": "1",
+    "params": [],
+    "single_task_duration": "2#m",
+    "command": [],
+    "jobs": [
+        {
+            "data": [],
+            "tasks": [
+                {
+                    "data": [
+                        "repast",
+                        "repast_test_123258",
+                        "ftp://jobserver.hopto.org/repast/exp_04/output/",
+                        "http://jobserver.hopto.org/repast/exp_04/model.tar",
+                        "http://jobserver.hopto.org/repast/exp_04/input/batch_params.xml_0"
+                    ],
+                    "id": "task_id_0",
+                    "command": [
+                        "/opt/execute.sh"
+                    ]
+                }
+            ],
+            "params": [],
+            "id": "job_id_0",
+            "command": []
+        },
+    ],
+}
